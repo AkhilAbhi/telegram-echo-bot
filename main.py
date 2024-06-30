@@ -15,8 +15,7 @@ async def echo(update: Update, context: CallbackContext) -> None:
     await update.message.reply_text(update.message.text)
 
 def main() -> None:
-    TOKEN = '7026799725:AAG_AQim8Glypyxo2Uz1Otz7fl-UoghLkKU'
-
+    TOKEN = os.getenv('token')
     # Create the Application and pass it your bot's token
     application = Application.builder().token(TOKEN).build()
 
