@@ -1,23 +1,34 @@
-from aiogram import Bot, Dispatcher, executor, types
+from telegram import Update
+from telegram.ext import Application, CommandHandler, MessageHandler, filters, CallbackContext
+
 import os
 from keep_alive import keep_alive
 keep_alive()
 
-bot = Bot(token=os.environ.get('token'))
-dp = Dispatcher(bot)
+async def start(update: Update, context: CallbackContext) -> None:
+    await update.message.reply_text('Hi! I am your bot. How can I help you today?')
 
-@dp.message_handler(commands=['start', 'help'])
-async def welcome(message: types.Message):
-    await message.reply("Hello! Im Gunther Bot, Please follow my YT channel")
+async def help_command(update: Update, context: CallbackContext) -> None:
+    await update.message.reply_text('You can use /start to start the bot and /help to get this message.')
 
-@dp.message_handler(commands=['logo'])
-async def logo(message: types.Message):
-    await message.answer_photo('https://avatars.githubusercontent.com/u/62240649?v=4')
+async def echo(update: Update, context: CallbackContext) -> None:
+    await update.message.reply_text(update.message.text)
 
-@dp.message_handler()
-async def echo(message: types.Message):
-    await message.reply(message.text)
+def main() -> None:
+    TOKEN = '7026799725:AAG_AQim8Glypyxo2Uz1Otz7fl-UoghLkKU'
 
+    # Create the Application and pass it your bot's token
+    application = Application.builder().token(TOKEN).build()
+
+    # Register command handlers
+    application.add_handler(CommandHandler("start", start))
+    application.add_handler(CommandHandler("help", help_command))
+
+    # Register message handler
+    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo))
+
+    # Start the Bot
+    application.run_polling()
 
 if __name__ == '__main__':
-    executor.start_polling(dp)
+    main()
